@@ -10,6 +10,9 @@ server {
 	ssl_certificate /opt/app-root/etc/nginx.conf.d/cert.pem;
     ssl_certificate_key /opt/app-root/etc/nginx.conf.d/key.pem;
 	
+	server_name localhost;
+	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
+	
     location / {
 	
         # proxy all traffic to this URL, 
