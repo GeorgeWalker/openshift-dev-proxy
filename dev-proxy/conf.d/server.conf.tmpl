@@ -11,8 +11,8 @@ server {
         # proxy all traffic to this URL, 
         # note the trailing slash strips out the /proxy path on 
         # the request to the upstream server
-        proxy_pass $PROXY;
-		proxy_set_header Authentication $AUTHENTICATION;
+        proxy_pass $PROXY_URL;
+		proxy_set_header Authorization $AUTHORIZATION;
 				        
         # Ensure HTTP get passed thru
         proxy_pass_request_headers on;
