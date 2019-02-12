@@ -1,0 +1,296 @@
+
+{
+  "kind": "Template",
+  "apiVersion": "v1",
+  "metadata":
+  {
+    "name": "openshift-dev-proxy-builds",
+    "annotations":
+    {
+      "description": "Contains frontend, middleware, backend builds.",
+      "tags": "openshift-dev-proxy",
+      "iconClass": "icon-github"
+    }
+  },
+  "labels":
+  {
+    "template": "openshift-dev-proxy-builds"
+  },
+  "objects": [
+    {
+      "kind": "ImageStream",
+      "apiVersion": "v1",
+      "metadata":
+      {
+        "name": "base-centos7",
+        "generation": 2,
+        "creationTimestamp": null,
+        "labels":
+        {
+          "template": "moti-dotnetcore-builds"
+        },
+        "annotations":
+        {
+          "openshift.io/image.dockerRepositoryCheck": "2016-12-13T21:35:23Z"
+        }
+      },
+      "spec":
+      {
+        "dockerImageRepository": "openshift/base-centos7",
+        "tags": [
+          {
+            "name": "latest",
+            "annotations": null,
+            "from":
+            {
+              "kind": "DockerImage",
+              "name": "openshift/base-centos7:latest"
+            },
+            "generation": 2,
+            "importPolicy": {}
+          }
+        ]
+      },
+      "status":
+      {
+        "dockerImageRepository": ""
+      }
+    },
+    {
+      "kind": "ImageStream",
+      "apiVersion": "v1",
+      "metadata":
+      {
+        "name": "s2i-nginx",
+        "generation": 1,
+        "creationTimestamp": null
+      },
+      "spec":
+      {
+        "tags": [
+          {
+            "name": "${DEPLOYMENT_TYPE}",
+            "annotations": null,
+            "generation": null,
+            "importPolicy": {}
+          }
+
+        ]
+      },
+      "status": {}
+    },
+    {
+      "kind": "ImageStream",
+      "apiVersion": "v1",
+      "metadata":
+      {
+        "name": "dev-proxy",
+        "generation": 1,
+        "creationTimestamp": null
+      },
+      "spec":
+      {
+        "tags": [
+          {
+            "name": "dev",
+            "annotations": null,
+            "generation": null,
+            "importPolicy": {}
+          }
+
+        ]
+      },
+      "status": {}
+    },
+    {
+      "kind": "BuildConfig",
+      "apiVersion": "v1",
+      "metadata":
+      {
+        "name": "s2i-nginx",
+        "creationTimestamp": null,
+        "labels":
+        {
+          "app": "s2i-nginx"
+        },
+        "annotations":
+        {
+          "openshift.io/generated-by": "OpenShiftNewApp"
+        }
+      },
+      "spec":
+      {
+        "triggers": [
+          {
+            "type": "ConfigChange"
+          },
+          {
+            "type": "ImageChange",
+            "imageChange": {}
+          }
+        ],
+        "runPolicy": "Serial",
+        "source":
+        {
+          "type": "Git",
+          "git":
+          {
+            "uri": "https://github.com/BCDevOps/s2i-nginx.git"
+          }
+        },
+        "strategy":
+        {
+          "type": "Docker",
+          "dockerStrategy":
+          {
+            "from":
+            {
+              "kind": "ImageStreamTag",
+              "name": "base-centos7:latest"
+            }
+          }
+        },
+        "output":
+        {
+          "to":
+          {
+            "kind": "ImageStreamTag",
+            "name": "s2i-nginx:${DEPLOYMENT_TYPE}"
+          }
+        },
+        "resources": {},
+        "postCommit": {},
+        "nodeSelector": null
+      },
+      "status":
+      {
+        "lastVersion": 0
+      }
+    },
+    {
+      "kind": "BuildConfig",
+      "apiVersion": "v1",
+      "metadata":
+      {
+        "name": "dev-proxy",
+        "creationTimestamp": null,
+        "labels":
+        {
+          "app": "dev-proxy"
+        }
+      },
+      "spec":
+      {
+        "triggers": [
+          {
+            "type": "ImageChange",
+            "imageChange": {}
+          },
+          {
+            "type": "ConfigChange"
+          }
+        ],
+        "runPolicy": "Serial",
+        "source":
+        {
+          "type": "Git",
+          "git":
+          {
+            "uri": "${SRC_REPO}",
+			"ref": "${GIT_REFERENCE}"
+          },
+          "contextDir": "/dev-proxy"
+        },
+        "strategy":
+        {
+          "type": "Source",
+          "sourceStrategy":
+          {
+            "from":
+            {
+              "kind": "ImageStreamTag",
+              "name": "s2i-nginx:latest"
+            }
+          }
+        },
+        "output":
+        {
+          "to":
+          {
+            "kind": "ImageStreamTag",
+            "namespace": "tran-schoolbus-tools",
+            "name": "${RPROXY_NAME}:${DEPLOYMENT_TYPE}"
+          }
+        },
+        "resources": {},
+        "postCommit": {},
+        "nodeSelector": null
+      },
+      "status":
+      {
+        "lastVersion": 0
+      }
+    },
+    {
+      "kind": "ImageStream",
+      "apiVersion": "v1",
+      "metadata":
+      {
+        "name": "${RPROXY_NAME}",
+        "generation": 1,
+        "creationTimestamp": null
+      },
+      "spec":
+      {
+        "tags": [
+          {
+            "name": "${DEPLOYMENT_TYPE}",
+            "annotations": null,
+            "generation": null,
+            "importPolicy": {}
+          }
+
+        ]
+      },
+      "status": {}
+    }
+    
+  ],
+  "parameters": [
+    {
+      "name": "APPLICATION_NAME",
+      "displayName": "Application Name",
+      "description": "The name given to the application",
+      "required": true,
+      "value": "dev-proxy"
+    },
+    {
+      "name": "RPROXY_NAME",
+      "displayName": "Reverse Proxy Name (SiteMinder)",
+      "description": "The name assigned to the objects used as a SiteMinder entry point (or Reverse Proxy).  Typcially this is an NGINX instance.",
+      "required": true,
+      "value": "dev-proxy"
+    },
+    {
+      "name": "DEPLOYMENT_TYPE",
+      "displayName": "Deployment Type",
+      "description": "The name assigned to the imagestreams defined in this template.",
+      "required": true,
+      "value": "latest"
+    },
+    {
+      "name": "SRC_REPO",
+      "displayName": "Source Repository",
+      "description": "The source repository to use for the builds.",
+      "required": true,
+      "value": "https://github.com/GeorgeWalker/openshift-dev-proxy.git"
+    },	
+    {
+      "name": "GIT_REFERENCE",
+      "displayName": "Git Reference",
+      "description": "Optional branch, tag, or commit.",
+      "required": true,
+      "value": "master"
+    }   
+  ]
+}

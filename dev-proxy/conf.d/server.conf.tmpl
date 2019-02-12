@@ -1,0 +1,37 @@
+server {
+    listen       8080;
+    server_name  _;
+    
+    # Allows non-standard headers like SMGOV_USERGUID
+    ignore_invalid_headers off;
+
+    
+    location / {
+	
+        # proxy all traffic to this URL, 
+        # note the trailing slash strips out the /proxy path on 
+        # the request to the upstream server
+        proxy_pass $PROXY;
+		proxy_set_header Authentication $AUTHENTICATION;
+				        
+        # Ensure HTTP get passed thru
+        proxy_pass_request_headers on;
+        
+        
+    }
+    
+    # For status of ngnix service
+    location /nginx_status {
+        # Enable Nginx stats
+        stub_status on;
+        # Only allow access from localhost
+        # allow all
+        #127.0.0.1;
+        # Other request should be denied
+        #deny all;
+        # No need to log this request, its just noise
+        access_log off;
+    }
+
+
+}
