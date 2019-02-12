@@ -1,11 +1,12 @@
 server {
-    listen       8080;
+    listen       443;
     server_name  _;
     
     # Allows non-standard headers like SMGOV_USERGUID
     ignore_invalid_headers off;
 
-    
+    ssl on
+	
     location / {
 	
         # proxy all traffic to this URL, 
@@ -16,8 +17,8 @@ server {
 				        
         # Ensure HTTP get passed thru
         proxy_pass_request_headers on;
-        
-        
+                
+		${HTTP_BASIC}
     }
     
     # For status of ngnix service
