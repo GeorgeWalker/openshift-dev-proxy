@@ -7,6 +7,9 @@ server {
 
     ssl on;
 	
+	ssl_certificate /opt/app-root/etc/nginx.conf.d/cert.pem;
+    ssl_certificate_key /opt/app-root/etc/nginx.conf.d/key.pem;
+	
     location / {
 	
         # proxy all traffic to this URL, 
