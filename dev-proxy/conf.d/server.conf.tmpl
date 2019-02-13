@@ -1,6 +1,6 @@
 server {
     listen       8080;
-    server_name  _;
+	server_name localhost;    
     
     # Allows non-standard headers like SMGOV_USERGUID
     ignore_invalid_headers off;
@@ -10,16 +10,30 @@ server {
 	ssl_certificate /opt/app-root/etc/nginx.conf.d/localhost.crt;
     ssl_certificate_key /opt/app-root/etc/nginx.conf.d/localhost.key;
 	
-	server_name localhost;
+	
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
 	
-    location / {
+    location /dynamics/ {
 	
         # proxy all traffic to this URL, 
         # note the trailing slash strips out the /proxy path on 
         # the request to the upstream server
-        proxy_pass $PROXY_URL;
-		proxy_set_header Authorization $AUTHORIZATION;
+        proxy_pass $DYNAMICS_PROXY_URL;
+		proxy_set_header Authorization $DYNAMICS_AUTHORIZATION;
+				        
+        # Ensure HTTP get passed thru
+        proxy_pass_request_headers on;
+                
+		${HTTP_BASIC}
+    }
+	
+	location /sharepoint/ {
+	
+        # proxy all traffic to this URL, 
+        # note the trailing slash strips out the /proxy path on 
+        # the request to the upstream server
+        proxy_pass $SHAREPOINT_PROXY_URL;
+		proxy_set_header Authorization $SHAREPOINT_AUTHORIZATION;
 				        
         # Ensure HTTP get passed thru
         proxy_pass_request_headers on;

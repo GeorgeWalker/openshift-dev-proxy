@@ -19,7 +19,7 @@
       "metadata": {
         "name": "${RPROXY_NAME}",
         "annotations": {
-          "description": "Exposes and load balances the reverse proxy used for SiteMinder"
+          "description": "Exposes and load balances the reverse proxy used for Dynamics"
         }
       },
       "spec": {
@@ -35,25 +35,7 @@
           "app": "${RPROXY_NAME}"
         }
       }
-    },
-    {
-      "kind": "Route",
-      "apiVersion": "v1",
-      "metadata": {
-        "name": "${RPROXY_NAME}"
-      },
-      "spec": {
-        "host": "${APPLICATION_DOMAIN}",
-        "to": {
-          "kind": "Service",
-		  "name": "${RPROXY_NAME}"
-		},
-		"tls": {
-            "termination": "edge"
-        },
-        "wildcardPolicy": "None"
-        }
-    },
+    },    
 	{
 		"kind": "DeploymentConfig",
 		"apiVersion": "v1",
@@ -96,7 +78,7 @@
 					}
 				}
 			],
-			"replicas": 2,
+			"replicas": 1,
 			"test": false,
 			"selector": {
 				"app": "${RPROXY_NAME}",
@@ -127,12 +109,32 @@
 									"value": "${RPROXY_NAME}"
 								},
 								{
-									"name": "PROXY",
+									"name": "DYNAMICS_PROXY_URL",
 									"value": "http://changeme:8080"									
 								},
 								{
-									"name": "AUTHENTICATION",
+									"name": "DYNAMICS_AUTHORIZATION",
 									"value": "changeme"									
+								},
+								{
+									"name": "SHAREPOINT_PROXY_URL",
+									"value": "http://changeme:8080"									
+								},
+								{
+									"name": "SHAREPOINT_AUTHORIZATION",
+									"value": "changeme"									
+								},										
+								{
+									"name": "USERNAME",
+									"value": "changeme"									
+								},								
+								{
+									"name": "PASSWORD",
+									"value": "changeme"									
+								},
+								{
+									"name": "HTTP_BASIC",
+									"value": "auth_basic ""Restricted Content""; auth_basic_user_file /tmp/.htpasswd;"									
 								}
 								
 							],
@@ -156,7 +158,7 @@
 	{
       "name": "RPROXY_NAME",
       "displayName": "Reverse Proxy Name (SiteMinder)",
-      "description": "The name assigned to the objects used as a SiteMinder entry point (or Reverse Proxy).  Typcially this is an NGINX instance.",
+      "description": "The name assigned to the objects used as a SiteMinder entry point (or Reverse Proxy).  Typically this is an NGINX instance.",
       "required": true,
       "value": "dev-proxy"
     },    
