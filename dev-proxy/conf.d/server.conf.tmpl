@@ -7,8 +7,8 @@ server {
 
     ssl on;
 	
-	ssl_certificate /opt/app-root/etc/nginx.conf.d/cert.pem;
-    ssl_certificate_key /opt/app-root/etc/nginx.conf.d/key.pem;
+	ssl_certificate /opt/app-root/etc/nginx.conf.d/localhost.crt;
+    ssl_certificate_key /opt/app-root/etc/nginx.conf.d/localhost.pem;
 	
 	server_name localhost;
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
