@@ -20,7 +20,11 @@ server {
         # the request to the upstream server
         proxy_pass $DYNAMICS_PROXY_URL;
 		proxy_set_header Authorization $DYNAMICS_AUTHORIZATION;
-				        
+		
+
+		# fix for some headers not going through
+		underscores_in_headers on;
+		
         # Ensure HTTP get passed thru
         proxy_pass_request_headers on;
                 
@@ -34,7 +38,9 @@ server {
         # the request to the upstream server
         proxy_pass $SHAREPOINT_PROXY_URL;
 		proxy_set_header Authorization $SHAREPOINT_AUTHORIZATION;
-				        
+				
+		# fix for some headers not going through
+		underscores_in_headers on;
         # Ensure HTTP get passed thru
         proxy_pass_request_headers on;
                 
