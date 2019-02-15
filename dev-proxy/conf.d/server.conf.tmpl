@@ -5,6 +5,9 @@ server {
     # Allows non-standard headers like SMGOV_USERGUID
     ignore_invalid_headers off;
 
+	# fix for some headers not going through
+	underscores_in_headers on;
+	
     ssl on;
 	
 	ssl_certificate /opt/app-root/etc/nginx.conf.d/localhost.crt;
@@ -20,10 +23,7 @@ server {
         # the request to the upstream server
         proxy_pass $DYNAMICS_PROXY_URL;
 		proxy_set_header Authorization $DYNAMICS_AUTHORIZATION;
-		
-
-		# fix for some headers not going through
-		underscores_in_headers on;
+			
 		
         # Ensure HTTP get passed thru
         proxy_pass_request_headers on;
@@ -39,8 +39,6 @@ server {
         proxy_pass $SHAREPOINT_PROXY_URL;
 		proxy_set_header Authorization $SHAREPOINT_AUTHORIZATION;
 				
-		# fix for some headers not going through
-		underscores_in_headers on;
         # Ensure HTTP get passed thru
         proxy_pass_request_headers on;
                 
