@@ -134,7 +134,7 @@
 								},
 								{
 									"name": "HTTP_BASIC",
-									"value": "auth_basic ""Restricted Content""; auth_basic_user_file /tmp/.htpasswd;"									
+									"value": "auth_basic 'Restricted Content'; auth_basic_user_file /tmp/.htpasswd;"
 								}
 								
 							],

@@ -10,8 +10,8 @@ server {
 	
     ssl on;
 	
-	ssl_certificate /opt/app-root/etc/nginx.conf.d/localhost.crt;
-    ssl_certificate_key /opt/app-root/etc/nginx.conf.d/localhost.key;
+	ssl_certificate /var/run/secrets/service-cert/tls.crt;
+    ssl_certificate_key /var/run/secrets/service-cert/tls.key;
 	
 	
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
